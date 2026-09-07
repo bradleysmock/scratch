@@ -1,0 +1,132 @@
+{
+  "version": "enterprise-thresholds/2026-09-01",
+  "effectiveFrom": "2026-09-01",
+  "publisher": "Parcel Scenario Calculator — working draft",
+  "notes": [
+    "EVERY THRESHOLD IN THIS FILE IS AN UNVERIFIED PLACEHOLDER. The values are plausible for southern Lower Michigan and are here so the model can be exercised and tested; not one of them has been traced to a published source.",
+    "Spec open question 4: minimum viable acreage is contested and varies by operator, market, and equipment. An indefensible threshold discredits the whole tool, so no figure here should reach a landowner until it has been checked against MSU Extension enterprise budgets and reviewed by Extension or Conservation District staff.",
+    "Until a figure is checked, leave its citation status at unverified-placeholder. The model reports that status in every brief; downgrading it silently is the failure mode this file exists to prevent.",
+    "Advisors who disagree with a figure should override it (see applyOverride) rather than edit this file, so the disagreement is recorded against the brief."
+  ],
+  "requirements": [
+    {
+      "id": "row-crop",
+      "label": "Row crop (corn, soybeans, small grains)",
+      "landBase": "tillable",
+      "minimumContiguousAcres": 40,
+      "drainageTolerance": { "wettest": "somewhat poorly drained", "driest": "well drained" },
+      "maxSlopePercent": 6,
+      "waterAccess": "not-required",
+      "fencing": "not-required",
+      "minimumProductivityIndex": 0.35,
+      "remediation": { "drainageByTile": true, "fencingInstallable": false },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending MSU Extension crop enterprise budgets",
+        "note": "Acreage floor is a stand-in for the point below which owning or hiring modern equipment stops penciling. Check against custom-rate work, which lowers it substantially."
+      }
+    },
+    {
+      "id": "hay",
+      "label": "Hay and forage",
+      "landBase": "tillable",
+      "minimumContiguousAcres": 10,
+      "drainageTolerance": { "wettest": "poorly drained", "driest": "well drained" },
+      "maxSlopePercent": 12,
+      "waterAccess": "not-required",
+      "fencing": "not-required",
+      "minimumProductivityIndex": 0.25,
+      "remediation": { "drainageByTile": true, "fencingInstallable": false },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending MSU Extension forage budgets",
+        "note": "Hay tolerates small and awkward fields better than row crop; the binding constraint is usually equipment access, not acreage."
+      }
+    },
+    {
+      "id": "managed-grazing",
+      "label": "Managed grazing",
+      "landBase": "total",
+      "minimumContiguousAcres": 20,
+      "drainageTolerance": { "wettest": "somewhat poorly drained", "driest": "excessively drained" },
+      "maxSlopePercent": 25,
+      "waterAccess": "year-round",
+      "fencing": "perimeter",
+      "minimumProductivityIndex": 0.15,
+      "remediation": { "drainageByTile": false, "fencingInstallable": true },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending MSU Extension grazing and livestock budgets",
+        "note": "Stocking rate, not acreage, is the real constraint. Water that fails in August is the most common reason a grazing plan collapses."
+      }
+    },
+    {
+      "id": "orchard",
+      "label": "Tree fruit orchard",
+      "landBase": "tillable",
+      "minimumContiguousAcres": 5,
+      "drainageTolerance": { "wettest": "moderately well drained", "driest": "somewhat excessively drained" },
+      "maxSlopePercent": 15,
+      "waterAccess": "seasonal",
+      "fencing": "perimeter",
+      "minimumProductivityIndex": 0.3,
+      "remediation": { "drainageByTile": false, "fencingInstallable": true },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending MSU Extension tree-fruit budgets",
+        "note": "Air drainage and frost pockets matter more than the figures modelled here and are not represented at all. Site elevation relative to surroundings is the missing variable."
+      }
+    },
+    {
+      "id": "vegetable",
+      "label": "Market vegetables",
+      "landBase": "tillable",
+      "minimumContiguousAcres": 2,
+      "drainageTolerance": { "wettest": "moderately well drained", "driest": "well drained" },
+      "maxSlopePercent": 5,
+      "waterAccess": "year-round",
+      "fencing": "perimeter",
+      "minimumProductivityIndex": 0.4,
+      "remediation": { "drainageByTile": true, "fencingInstallable": true },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending MSU Extension vegetable budgets",
+        "note": "Market access, labour, and irrigation capital dominate the acreage question. This threshold describes the land only."
+      }
+    },
+    {
+      "id": "timber",
+      "label": "Managed timber",
+      "landBase": "total",
+      "minimumContiguousAcres": 20,
+      "drainageTolerance": { "wettest": "very poorly drained", "driest": "excessively drained" },
+      "maxSlopePercent": 45,
+      "waterAccess": "not-required",
+      "fencing": "not-required",
+      "minimumProductivityIndex": null,
+      "remediation": { "drainageByTile": false, "fencingInstallable": false },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending Michigan DNR forest management and MSU Extension guidance",
+        "note": "NCCPI rates commodity cropping and does not describe forest productivity; site index would, and is not modelled. Acreage floor reflects the size at which a harvest attracts a buyer."
+      }
+    },
+    {
+      "id": "agroforestry",
+      "label": "Agroforestry (silvopasture, alley cropping, riparian buffer)",
+      "landBase": "total",
+      "minimumContiguousAcres": 10,
+      "drainageTolerance": { "wettest": "poorly drained", "driest": "well drained" },
+      "maxSlopePercent": 25,
+      "waterAccess": "seasonal",
+      "fencing": "perimeter",
+      "minimumProductivityIndex": 0.2,
+      "remediation": { "drainageByTile": false, "fencingInstallable": true },
+      "citation": {
+        "status": "unverified-placeholder",
+        "source": "Working assumption pending NRCS conservation practice standards and MSU Extension guidance",
+        "note": "Agroforestry covers practices with very different land requirements. Treating them as one enterprise is a simplification that should be revisited before this reaches an advisor."
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "parcel-scenario-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pure domain core for the Parcel Scenario Calculator: enterprise viability and land-disposition scenario comparison.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "example": "node src/examples/worked-brief.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.0"
+  }
+}
