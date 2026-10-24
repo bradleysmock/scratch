@@ -4,7 +4,7 @@
 **Date:** September 7, 2026
 **Owner:** Bradley — Maple Hill Farm
 **Elaborates:** §7 of *Parcel Scenario Calculator — Narrowed Specification* v0.1
-**Assumes:** the domain core on this branch (`src/domain`), which is built and tested
+**Assumes:** the domain core in `parcel-scenario-calculator/src/domain`, which is built and tested
 
 ---
 
@@ -323,7 +323,7 @@ ETL.
 
 Field names to verify against the vintage actually downloaded: `mapunit.farmlndcl`,
 `muaggatt.drclassdcd`, `muaggatt.slopegradwta`, `muaggatt.hydclprs`, and the NCCPI column in
-the gSSURGO Valu1 table. Normalize each to the vocabularies in `src/domain/soil.ts`
+the gSSURGO Valu1 table. Normalize each to the vocabularies in `parcel-scenario-calculator/src/domain/soil.ts`
 (`DRAINAGE_CLASSES`, `FARMLAND_CLASSES`); an unmapped value is a load failure, not a null.
 
 ### 5.4 Contiguous tillable acreage — prototype this first
