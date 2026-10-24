@@ -1,7 +1,8 @@
 # Parcel Scenario Calculator — domain core
 
-Pure domain layer for the tool described in
-[`docs/parcel-scenario-calculator-spec.md`](docs/parcel-scenario-calculator-spec.md):
+Domain core and spatial layer for the tool described in
+[`docs/parcel-scenario-calculator-spec.md`](docs/parcel-scenario-calculator-spec.md), with
+the backend design in [`docs/backend-spec.md`](docs/backend-spec.md):
 enterprise viability (§5.3), subdivision modelling and scenario comparison (§5.4),
 the fragmentation threshold (§1), and the JSON brief (§5.6).
 
@@ -11,12 +12,21 @@ they mean, and it is the part the spec says must be unit-testable on its own.
 
 ```bash
 npm install
-npm test        # 71 tests, node:test
+npm test        # 85 tests; the 10 spatial ones skip without a database
 npm run typecheck
 npm run example # a worked brief for a fictional 180-acre holding, printed
 ```
 
 Requires Node 22.18+ (TypeScript runs directly, via type stripping).
+
+The spatial layer additionally needs PostgreSQL 16 + PostGIS 3.4; setup and the
+calibration run are in [`docs/phase-1b-findings.md`](docs/phase-1b-findings.md).
+
+```bash
+export PSC_DATABASE_URL="postgresql://psc:psc@127.0.0.1:5432/psc"
+npm run db:migrate && npm run db:fixtures
+npm run calibrate   # sweeps the contiguity gap parameter and reports what it moves
+```
 
 ## What is here
 
@@ -33,6 +43,22 @@ Requires Node 22.18+ (TypeScript runs directly, via type stripping).
 | `domain/fragmentation.ts` | The headline number: at what share count does each enterprise die |
 | `domain/brief.ts` | Versioned JSON export with disclaimers attached (§5.6) |
 | `data/enterprise-thresholds.v1.json` | Thresholds as data, versioned and cited |
+| `spatial/characterize.ts` | PostGIS → domain `LandUnit`: soil attachment, contiguity, provenance |
+| `calibration/gap-sweep.ts` | Phase 1b harness: does the contiguity parameter change the advice? |
+| `db/migrations` · `db/fixtures` | Schemas, the contiguity SQL function, a constructed fixture holding |
+
+## The contiguity parameter changes the answer
+
+The largest-contiguous-tillable-block figure is the input every acreage criterion reads, and
+computing it requires deciding whether a narrow field crossing counts as a connection. On an
+ordinary two-block field system joined by one 8-metre crossing, that decision moves the
+row-crop fragmentation threshold from three shares to two.
+
+So the figure is bracketed rather than calibrated to one value: compute it at both ends of
+the plausible range, carry the permissive reading (it is the upper bound, which is what keeps
+"this enterprise is lost" claims sound), and flag the parcel as crossing-dependent when the
+two disagree. Full argument and the sweep in
+[`docs/phase-1b-findings.md`](docs/phase-1b-findings.md).
 
 ## Three properties worth knowing before you read the code
 
@@ -68,9 +94,11 @@ records who changed what, from what, and why, against the brief.
 
 ## Deliberately not here
 
-- **SSURGO ingestion, parcel layers, PostGIS, PDF rendering.** Phase 1 and 2
-  infrastructure. The domain takes soil observations as input, which is exactly
-  what the spatial join produces, so the seam is already cut.
+- **SSURGO ingestion and parcel layers.** The spatial layer reads whatever is in the
+  `reference` schema; the ETL that fills it from real USDA and county data is not written,
+  and parcel data is still blocked on per-county licensing. The only holding in the
+  repository is a constructed fixture, labelled as such.
+- **The API, PDF rendering, and the scenario/run tables.** Phases 1c–2b.
 - **PA 116, ACEP-ALE, and PDR scenarios.** Phase 3. They need versioned rule
   records with effective-date ranges and citations (§5.5); adding them as code
   here is what §5.5 exists to prevent.

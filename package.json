@@ -10,10 +10,15 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "node --test \"src/**/*.test.ts\"",
-    "example": "node src/examples/worked-brief.ts"
+    "example": "node src/examples/worked-brief.ts",
+    "db:migrate": "for f in db/migrations/*.sql; do psql -v ON_ERROR_STOP=1 -f $f \"$PSC_DATABASE_URL\"; done",
+    "db:fixtures": "psql -v ON_ERROR_STOP=1 -f db/fixtures/constructed-holding.sql \"$PSC_DATABASE_URL\"",
+    "calibrate": "node src/calibration/gap-sweep.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/pg": "^8.23.1",
+    "pg": "^8.23.1",
     "typescript": "^5.9.0"
   }
 }

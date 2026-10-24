@@ -328,14 +328,21 @@ the gSSURGO Valu1 table. Normalize each to the vocabularies in `src/domain/soil.
 
 ### 5.4 Contiguous tillable acreage — prototype this first
 
+> **Prototyped. See [`phase-1b-findings.md`](phase-1b-findings.md).** The finding: the gap
+> parameter moves the row-crop fragmentation threshold by a whole share on ordinary
+> geometry. The single-value framing below is superseded — bracket the parameter, carry the
+> permissive reading, and flag the parcel where the two disagree.
+
 Every acreage criterion in the viability model reads this number, and nothing currently
 produces it. It is the highest-risk computation in the system.
 
 **Tillable extent** = land unit geometry, minus water and wetland (NHD, NWI), minus
 non-cultivated cover (NASS Cropland Data Layer, 30 m raster, vectorized at load), minus
-map units above a general tillage slope limit. The CDL is coarse for a 40-acre field edge,
-so the advisor must be able to override the result by drawing the fields; the override is
-recorded as `contiguity_method.source = 'advisor-drawn'`.
+map units above a general tillage slope limit. The CDL is adequate for the bulk of a
+field's extent and **physically incapable of resolving its connections** — an 8 m crossing
+is a third of one 30 m pixel — so advisor-drawn tillable extent is not a nice-to-have: it
+is the only thing that settles the headline number on a crossing-dependent parcel. The
+override is recorded in `contiguity_method.tillableSource`.
 
 **Largest contiguous block:**
 
@@ -470,9 +477,13 @@ most, and their availability is unreliable at exactly the moment an advisor is i
 2. Load into a staging table (`ogr2ogr` or `shp2pgsql` into `reference_staging`).
 3. Normalize vocabularies; **fail the load** on any unmapped drainage class, farmland class,
    or drainage/slope aggregation we do not recognize.
-4. Validate geometry (`ST_IsValid`), reproject nothing (store 4326), index.
+4. Validate geometry (`ST_IsValid`), reproject nothing (store 4326), index. **Transform
+   once on load, then node.** Narrow features — field crossings, drain corridors, parcel
+   strips — are where a transform's vertex error decides topology, and edges that should
+   coincide will not if neighbouring features are transformed independently (Phase 1b, §6).
 5. Run assertions: row counts within tolerance of the previous vintage, total area within
-   tolerance, no empty geometries, spot-check known parcels.
+   tolerance, no empty geometries, spot-check known parcels, and adjacent features that
+   should share a boundary actually do.
 6. Insert `dataset_version`, mark the prior version `superseded_by`, swap in one transaction.
 
 Loads are idempotent by `(dataset, scope, vintage)`. Reloading is a no-op unless the
@@ -595,7 +606,7 @@ and it is currently asserted by argument rather than by test.
 | --- | --- |
 | **0** | None. Kill-or-confirm conversations come first and still have not happened. |
 | **1a** | Postgres + PostGIS, migrations, SSURGO + Washtenaw parcel ETL, `dataset_version` pinning |
-| **1b** | Land unit from parcels, soil attachment, **contiguity prototype and calibration** (§5.4) |
+| **1b** | Land unit from parcels, soil attachment, **contiguity prototype and calibration** (§5.4). Prototype done; calibration against real ground outstanding — see `phase-1b-findings.md` |
 | **1c** | Characterization API + server-rendered intake and soils view |
 | **2a** | Scenarios, runs, pinned briefs, JSON export |
 | **2b** | PDF pipeline, server-side maps, PDF/A |
@@ -617,9 +628,11 @@ knowing in week three rather than month six.
 2. **Is the CDL good enough to derive tillable extent,** or does every holding need an
    advisor to draw the fields? This decides whether Phase 1 is usable unattended or is
    always a two-person exercise. Test it against Maple Hill before building around it.
-3. **How much does `$gap` move the answer?** If the fragmentation threshold swings with a
-   plausible parameter change, the headline number is softer than it looks and the brief
-   must say so.
+3. ~~**How much does `$gap` move the answer?**~~ **Answered in part (Phase 1b):** it moves
+   the row-crop threshold from three shares to two on an ordinary two-block field system
+   joined by one 8 m crossing. The brief must say so, per share count and per enterprise.
+   What remains open is how often real Washtenaw parcels are crossing-dependent — an edge
+   case or the normal case — which is measurable as soon as one real parcel is in hand.
 4. **Do advisors need to revisit a session weeks later?** If yes, token-only access is too
    fragile and accounts move from Phase 3 to Phase 2 — a change §7 explicitly resists, so
    the evidence should be real before making it.
